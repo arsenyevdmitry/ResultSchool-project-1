@@ -34,7 +34,8 @@ export const App = () => {
 				<h1>Инструкция по готовке пельменей</h1>
 				<div className={styles.steps}>
 					<div className={styles["steps-content"]}>
-						{steps[activeIndex].content}
+						<h2>{steps[activeIndex].title}</h2>
+						<p>{steps[activeIndex].content}</p>
 					</div>
 					<ul className={styles["steps-list"]}>
 						{steps.map((step, index) => (
@@ -50,9 +51,8 @@ export const App = () => {
 									className={styles["steps-item-button"]}
 									onClick={() => handleStepClick(index)}
 								>
-									{index + 1}
+									{step.title}
 								</button>
-								Шаг {index + 1}
 							</li>
 						))}
 					</ul>
