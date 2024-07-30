@@ -1,60 +1,75 @@
-import "./App.css";
-
 import React, { useState } from "react";
 
-const App = () => {
-	const [value, setValue] = useState("");
-	const [list, setList] = useState([]);
-	const [error, setError] = useState("");
+import data from "./data.json";
+import styles from "./app.module.css";
 
-	const onInputButtonClick = () => {
-		const promptValue = prompt("Введите значение:");
-		if (promptValue) {
-			if (promptValue.length < 3) {
-				setError("Значение должно содержать минимум 3 символа.");
-			} else {
-				setValue(promptValue);
-				setError("");
-			}
+export const App = () => {
+	const [steps, setSteps] = useState(data);
+	const [activeIndex, setActiveIndex] = useState(0);
+
+	const handleNext = () => {
+		if (activeIndex < steps.length - 1) {
+			setActiveIndex(activeIndex + 1);
+		} else {
+			setActiveIndex(0);
 		}
 	};
 
-	const onAddButtonClick = () => {
-		if (value.length >= 3) {
-			const newList = [...list, { id: Date.now(), value: value }];
-			setList(newList);
-			setValue("");
-			setError("");
+	const handlePrev = () => {
+		if (activeIndex > 0) {
+			setActiveIndex(activeIndex - 1);
 		}
 	};
 
-	const isValueValid = value.length >= 3;
+	const handleStepClick = (index) => {
+		setActiveIndex(index);
+	};
+
+	const isFirstStep = activeIndex === 0;
+	const isLastStep = activeIndex === steps.length - 1;
 
 	return (
-		<div className="app">
-			<div>
-				<h2>Ввод значения:</h2>
-				<output>{value}</output>
-				{error && <div className="error">{error}</div>}
-				<button onClick={onInputButtonClick}>Ввести новое</button>
-				<button onClick={onAddButtonClick} disabled={!isValueValid}>
-					Добавить в список
-				</button>
-			</div>
-			<div>
-				<h2>Список:</h2>
-				{list.length > 0 ? (
-					<ul>
-						{list.map((item) => (
-							<li key={item.id}>{item.value}</li>
+		<div className={styles.container}>
+			<div className={styles.card}>
+				<h1>Инструкция по готовке пельменей</h1>
+				<div className={styles.steps}>
+					<div className={styles["steps-content"]}>
+						{steps[activeIndex].content}
+					</div>
+					<ul className={styles["steps-list"]}>
+						{steps.map((step, index) => (
+							<li
+								key={index}
+								className={`${styles["steps-item"]} ${
+									index <= activeIndex ? styles.done : ""
+								} ${
+									index === activeIndex ? styles.active : ""
+								}`}
+							>
+								<button
+									className={styles["steps-item-button"]}
+									onClick={() => handleStepClick(index)}
+								>
+									{index + 1}
+								</button>
+								Шаг {index + 1}
+							</li>
 						))}
 					</ul>
-				) : (
-					<p>Нет добавленных элементов</p>
-				)}
+					<div className={styles["buttons-container"]}>
+						<button
+							className={styles.button}
+							onClick={handlePrev}
+							disabled={isFirstStep}
+						>
+							Назад
+						</button>
+						<button className={styles.button} onClick={handleNext}>
+							{isLastStep ? "Начать сначала" : "Далее"}
+						</button>
+					</div>
+				</div>
 			</div>
 		</div>
 	);
 };
-
-export default App;
