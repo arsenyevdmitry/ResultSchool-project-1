@@ -1,30 +1,60 @@
-/*Декларативный*/
 import "./App.css";
 
-import CurrentDate from "./currentDate";
-import React from "react";
-import logo from "./logo.svg";
+import React, { useState } from "react";
 
-function App() {
+const App = () => {
+	const [value, setValue] = useState("");
+	const [list, setList] = useState([]);
+	const [error, setError] = useState("");
+
+	const onInputButtonClick = () => {
+		const promptValue = prompt("Введите значение:");
+		if (promptValue) {
+			if (promptValue.length < 3) {
+				setError("Значение должно содержать минимум 3 символа.");
+			} else {
+				setValue(promptValue);
+				setError("");
+			}
+		}
+	};
+
+	const onAddButtonClick = () => {
+		if (value.length >= 3) {
+			const newList = [...list, { id: Date.now(), value: value }];
+			setList(newList);
+			setValue("");
+			setError("");
+		}
+	};
+
+	const isValueValid = value.length >= 3;
+
 	return (
-		<div className="App">
-			<header className="App-header">
-				<img src={logo} className="App-logo" alt="logo" />
-				<p>
-					Edit <code>src/App.js</code> and save to reload.
-				</p>
-				<a
-					className="App-link"
-					href="https://reactjs.org"
-					target="_blank"
-					rel="noopener noreferrer"
-				>
-					Learn React
-				</a>
-				<CurrentDate />
-			</header>
+		<div className="app">
+			<div>
+				<h2>Ввод значения:</h2>
+				<output>{value}</output>
+				{error && <div className="error">{error}</div>}
+				<button onClick={onInputButtonClick}>Ввести новое</button>
+				<button onClick={onAddButtonClick} disabled={!isValueValid}>
+					Добавить в список
+				</button>
+			</div>
+			<div>
+				<h2>Список:</h2>
+				{list.length > 0 ? (
+					<ul>
+						{list.map((item) => (
+							<li key={item.id}>{item.value}</li>
+						))}
+					</ul>
+				) : (
+					<p>Нет добавленных элементов</p>
+				)}
+			</div>
 		</div>
 	);
-}
-/*Декларативный*/
+};
+
 export default App;
